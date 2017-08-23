@@ -26,7 +26,7 @@ while [[ $name ]]; do
 	       printf "# date  \t #all_objs \t\t all_size(KB) \t\t #live_objs \t\t live_size(KB)\n"
        fi
        sleep 1 
-       name=$(jps 2>&1 | grep $1 | awk '{print $2}')  
+       name=$(jps -l 2>&1 | grep $1 | awk '{print $2}')  
        if [[ ! $name ]]; then 
 	       echo "ERROR: PID $1 is not alive anymore, exiting..."
        fi
