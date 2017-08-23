@@ -15,8 +15,14 @@ printf "# profile for : $name \n"
 printf "# date  \t #all_objs \t\t all_size(KB) \t\t #live_objs \t\t live_size(KB)\n"
 while [[ $name ]]; do 
        # we can check here if the process is still alive 
-	live=$(jmap -histo:live $1 2>&1 | tail -1 | awk '{print $2,"\t\t",$3/1024}') 
-	all=$(jmap -histo $1 2>&1 | tail -1 | awk '{print $2,"\t\t",$3/1024}') 
+	#live=$(jmap -histo:live $1 2>&1 | tail -1 | awk '{printf "%f \t\t %f", $2, $3/1024}') 
+	#all=$(jmap -histo $1 2>&1 | tail -1 | awk '{printf "%f \t\t %f", $2, $3/1024}') 
+	
+	live=$(jmap -histo:live $1 2>&1 | tail -1 | awk '{OFMT = "%0.f"} {print $2,"\t\t", $3/1024}') 
+	all=$(jmap -histo $1 2>&1 | tail -1 | awk '{OFMT = "%0.f"} {print $2,"\t\t",$3/1024}') 
+
+	#{OFMT = "%.0f"}
+
 	d=$(date +%T)
 	printf "%s \t %s \t\t %s\n" "$d" "$all" "$live"
 	loop=$(($loop + 1)) 
