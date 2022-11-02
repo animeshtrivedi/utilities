@@ -1,0 +1,6 @@
+% vm 1
+atr@node1:/home/atr/bin/utilities/qemu$ sudo /home/atr/src/qemu-6.1.0/build//qemu-system-x86_64 -name qemuzns -m 32G --enable-kvm -cpu host -smp 4 -hda /mnt/sdb/atr/vm-target.qcow -net user,hostfwd=tcp::7777-:22 -net nic -drive file=/mnt/sdb/atr/nvmessd-4G.img,id=nvme-device,format=raw,if=none -device nvme,drive=nvme-device,serial=nvme-dev,physical_block_size=4096,logical_block_size=4096 -netdev bridge,id=hn0,br=br1,helper=/home/atr/src/qemu-6.1.0/build/qemu-bridge-helper -device virtio-net-pci,netdev=hn0,id=nic1,mac=e6:c8:ff:09:76:99
+
+%vm 2
+sudo /home/atr/src/qemu-6.1.0/build//qemu-system-x86_64 -name qemuzns2 -m 32G --enable-kvm -cpu host -smp 4 -hda /mnt/sdb/atr/vm-initiator.qcow -net user,hostfwd=tcp::8888-:22 -net nic -netdev bridge,id=hn0,br=br1,helper=/home/atr/src/qemu-6.1.0/build/qemu-bridge-helper -device virtio-net-pci,netdev=hn0,id=nic1,mac=e6:c8:ff:09:76:9c
+
