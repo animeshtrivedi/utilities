@@ -27,6 +27,6 @@ echo $SERVER_IP_PORT |sudo tee -a addr_trsvcid > /dev/null
 echo ipv4 | sudo tee -a addr_adrfam > /dev/null
 echo "3. port setup done..."
 
-sudo ln -s /sys/kernel/config/nvmet/subsystems/nvme-test-target/ /sys/kernel/config/nvmet/ports/1/subsystems/nvme-test-target
+sudo ln -s /sys/kernel/config/nvmet/subsystems/$NAMESPACE_NAME/ /sys/kernel/config/nvmet/ports/1/subsystems/$NAMESPACE_NAME
 echo "4. linking done...see the dmesg log output (last 10 lines)"
 dmesg | tail -10
