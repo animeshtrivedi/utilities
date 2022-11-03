@@ -18,5 +18,7 @@ sudo nvme connect -t tcp -n $NAMESPACE_NAME -a $SERVER_IP_ADDR -s $SERVER_IP_POR
 echo "4. show list"
 sudo nvme list
 
+echo "5. mounting the file system"
+
 # how to disconnect
 # sudo nvme disconnect /dev/nvme0n1 -n nvme-test-target
