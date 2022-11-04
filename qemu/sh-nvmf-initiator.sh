@@ -1,5 +1,6 @@
 #!/bin/bash
 NVME_DEVICE="/dev/nvme0n1"
+MOUNT_POINT="/mnt/nvmf-tcp/"
 SERVER_IP_ADDR="190.160.10.8"
 SERVER_IP_PORT=4420
 NAMESPACE_NAME="nvme-atr-target"
@@ -19,6 +20,8 @@ echo "4. show list"
 sudo nvme list
 
 echo "5. mounting the file system"
+sudo mount $NVME_DEVICE $MOUNT_POINT
+sudo chown -R $USER $MOUNT_POINT
 
 # how to disconnect
 # sudo nvme disconnect /dev/nvme0n1 -n nvme-test-target
