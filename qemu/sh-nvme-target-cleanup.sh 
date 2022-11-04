@@ -1,0 +1,21 @@
+#!/bin/bash
+NVME_DEVICE="/dev/nvme0n1"
+SERVER_IP_ADDR="190.160.10.8"
+SERVER_IP_PORT=4420
+NAMESPACE_NAME="nvme-atr-target"
+PORT=1
+
+set -ex
+
+cd /sys/kernel/config/nvmet/subsystems/$NAMESPACE_NAME
+echo 0 | sudo tee -a attr_allow_any_host > /dev/null
+cd namespaces/$PORT
+echo 0|sudo tee -a enable > /dev/null
+echo "1. disable the target namespace..."
+
+# symlink
+sudo rm /sys/kernel/config/nvmet/ports/$PORT/subsystems/$NAMESPACE_NAME
+#directories
+sudo rm -rf /sys/kernel/config/nvmet/ports/$PORT
+sudo rm -r /sys/kernel/config/nvmet/subsystems/$NAMESPACE_NAME
+echo "2. all directories deleted..."

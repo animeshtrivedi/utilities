@@ -1,0 +1,17 @@
+set $dir=/mnt/nvmf-tcp/filebench
+set $nfiles=100
+set $meandirwidth=0
+set $filesize=0
+set $nthreads=1
+set $prealloc=0
+
+define fileset name="stat",entries=$nfiles,filesize=$filesize,prealloc=$prealloc,path=$dir
+
+define process name="P",instances=1 {
+        thread name="T",instances=$nthreads {
+                    flowop createfile name=createfile,filesetname=crclose,fd=1,iodirect=1
+                    flowop statfile name=statfile,fd=1
+                    flowop closefile name=closefile1,fd=1
+        }
+}
+run 5
