@@ -10,7 +10,7 @@
 /* Variable to store user content */
 char data[DATA_SIZE];
 //char path[]="/mnt/nvmf-tcp/atr-bench/";
-char path[]="/home/atr/optane-mnt/atr-test/";
+//char path[]="/home/atr/optane-mnt/atr-test/";
 
 static unsigned long long epoch_time(){
     struct timeval tv;
@@ -41,16 +41,20 @@ int create_single(char *fpath, int dirfd) {
 
 int main(int argc, char **argv) {
     int times = 10;
-    // add +10 bytes in the end to capture a 10 digit number
-    int sizeAlloc = strlen(path) + 10;
+    // add +10 bytes in the end to capture a 100 digit number
+    if(argc < 3){
+        printf("Please pass : path and number. Like: \n");
+        printf("./a.out /home/atr/optane-mnt/atr-test/ 10000");
+        return -1;
+    }
+    char *path = argv[1];
+    int sizeAlloc = strlen(path) + 100;
     char *enumPath = calloc(sizeAlloc, 1);
     if(enumPath == NULL){
         printf("Failed memory allocation \n");
         return -1;
     }
-    if(argc == 2){
-        times = atoi(argv[1]);
-    }
+    times = atoi(argv[2]);
     // open the dirfd
     int dirfd = open(path, O_RDONLY|O_DIRECTORY, 0644);
     if(dirfd < 0){
@@ -68,7 +72,8 @@ int main(int argc, char **argv) {
     }
     long long int e = epoch_time();
     close(dirfd);
-    printf(" %d files at %s directory took %llu milliseconds\n", times, path, (e-s)/1000);
-    printf(" %llu ops/sec \n", (times * 1000000/(e-s)));
+    float msec = (e-s)/1000;
+    printf(" %d files at %s directory took %f milliseconds\n", times, path, msec);
+    printf(" rate: %f ops/sec \n", (times * 1000)/msec);
     return 0;
 }
