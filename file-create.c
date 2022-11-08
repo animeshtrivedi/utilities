@@ -31,11 +31,12 @@ int create_single(char *fpath, int dirfd) {
         printf("file fsync failed path %s errno %d \n", fpath, errno);
         return -1;
     }
+    close(fd);
+
     if(fsync(dirfd) != 0){
         printf("file fsync DIR failed path %s errno %d \n", fpath, errno);
         return -1;
     }
-    close(fd);
     return 0;
 }
 

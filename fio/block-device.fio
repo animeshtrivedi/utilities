@@ -1,0 +1,1 @@
+sudo fio --filename=/dev/nvme2n1 --direct=1 --rw=randwrite --bs=512 --ioengine=io_uring --iodepth=1 --runtime=30 --numjobs=1 --time_based --group_reporting --name=iops-test-job --eta-newline=1
