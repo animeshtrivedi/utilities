@@ -9,7 +9,8 @@
 #define DATA_SIZE 1000
 /* Variable to store user content */
 char data[DATA_SIZE];
-char path[]="/mnt/nvmf-tcp/atr-bench/";
+//char path[]="/mnt/nvmf-tcp/atr-bench/";
+char path[]="/home/atr/optane-mnt/atr-test/";
 
 static unsigned long long epoch_time(){
     struct timeval tv;
@@ -51,7 +52,7 @@ int main(int argc, char **argv) {
         times = atoi(argv[1]);
     }
     // open the dirfd
-    int dirfd = open(path, O_WRONLY, 0644);
+    int dirfd = open(path, O_RDONLY|O_DIRECTORY, 0644);
     if(dirfd < 0){
         printf("opening of the directory path failed at %s errno %d \n", path, errno);
         return -1;
@@ -68,5 +69,6 @@ int main(int argc, char **argv) {
     long long int e = epoch_time();
     close(dirfd);
     printf(" %d files at %s directory took %llu milliseconds\n", times, path, (e-s)/1000);
+    printf(" %llu ops/sec \n", (times * 1000000/(e-s)));
     return 0;
 }
