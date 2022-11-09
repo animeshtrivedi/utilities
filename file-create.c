@@ -6,9 +6,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-#define DATA_SIZE 1000
-/* Variable to store user content */
-char data[DATA_SIZE];
+#define DATA_SIZE 512
 //char path[]="/mnt/nvmf-tcp/atr-bench/";
 //char path[]="/home/atr/optane-mnt/atr-test/";
 
@@ -21,11 +19,20 @@ static unsigned long long epoch_time(){
     return usec;
 }
 
-int create_single(char *fpath, int dirfd) {
+int create_single(char *fpath, int dirfd, char *buffer, int size) {
     int fd = open(fpath, O_CREAT | O_WRONLY | O_APPEND | O_CREAT, 0644);
     if (fd < 0) {
         printf("file opening failed path %s errno %d \n", fpath, errno);
         return -1;
+    }
+    /* write it out */
+    int done = 0, ret;
+    while (done < size){
+        ret = write(fd, buffer + done, size - done);
+        if(ret < 0){
+            return ret;
+        }
+        done+=ret;
     }
     if(fsync(fd) != 0){
         printf("file fsync failed path %s errno %d \n", fpath, errno);
@@ -42,13 +49,18 @@ int create_single(char *fpath, int dirfd) {
 
 int main(int argc, char **argv) {
     int times = 10;
-    // add +10 bytes in the end to capture a 100 digit number
+    char *buffer = calloc(1, DATA_SIZE);
+    if(buffer == NULL){
+        printf("buffer allocation of size %d failed\n", DATA_SIZE);
+        return -ENOMEM;
+    }
     if(argc < 3){
         printf("Please pass : path and number. Like: \n");
         printf("./a.out /home/atr/optane-mnt/atr-test/ 10000");
         return -1;
     }
     char *path = argv[1];
+    // add +100 bytes in the end to capture a 100 digit number, well!
     int sizeAlloc = strlen(path) + 100;
     char *enumPath = calloc(sizeAlloc, 1);
     if(enumPath == NULL){
@@ -66,7 +78,7 @@ int main(int argc, char **argv) {
     long long int s = epoch_time();
     for(int i = 0; i < times; i++){
         snprintf(enumPath, sizeAlloc, "%s/%d", path, i);
-        if(create_single(enumPath, dirfd) != 0){
+        if(create_single(enumPath, dirfd, buffer, DATA_SIZE) != 0){
             printf("Error failed, break \n");
             break;
         }

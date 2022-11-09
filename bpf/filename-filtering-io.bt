@@ -1,0 +1,11 @@
+#!/usr/bin/env bpftrace
+
+#include <linux/path.h>
+#include <linux/fs.h>
+#include <linux/dcache.h>
+
+kprobe:vfs_write
+/comm == "write.out" /
+{
+	printf("process name: %s filename: %s mount %s write: %d byte buffer\n", comm, str(((struct file *)arg0)->f_path.dentry->d_name.name), str(((struct file *)arg0)->f_path.mnt->mnt_root->d_name.name), arg2);
+}

@@ -1,0 +1,28 @@
+#!/usr/bin/env bpftrace
+
+#include <linux/blkdev.h>
+#include <linux/nvme.h>
+
+BEGIN
+{
+	printf("Tracing nvme-wrt cmds with init stacks. Hit Ctrl-C to end.\n");
+}
+
+kprobe:nvme_submit_cmd
+{
+    //printf(" opcode: %d and length %d \n", ((struct nvme_command *)arg1)->rw.opcode, ((struct nvme_command *)arg1)->rw.length);
+	//@reqts[arg0] = hist(((struct nvme_command *)arg1)->rw.length);
+}
+
+kprobe:nvme_setup_cmd
+/arg0/
+{
+    $req = (struct request *)(arg1);
+    @endhist = hist($req->__data_len);
+    //printf(" size request %lu \n", $req->__data_len);
+}
+
+END
+{
+	clear(@reqts);
+}
