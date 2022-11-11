@@ -2,10 +2,11 @@
 
 #include <linux/blkdev.h>
 #include <linux/nvme.h>
+#include <linux/blk_types.h>
 
 BEGIN
 {
-	printf("Tracing nvme-wrt cmds with init stacks. Hit Ctrl-C to end.\n");
+	printf("Tracing nvme_submit_cmd(w) with initstacks. Hit Ctrl-C to end.\n");
 }
 
 kprobe:nvme_submit_cmd
@@ -18,11 +19,11 @@ kprobe:nvme_setup_cmd
 /arg0/
 {
     $req = (struct request *)(arg1);
-    @endhist = hist($req->__data_len);
-    //printf(" size request %lu \n", $req->__data_len);
+    @endhist[kstack] = hist($req->__data_len);
+    //printf(" size request %lu opcode: %d \n", $req->__data_len, (req->cmd_flags & REQ_OP_MASK));
 }
 
 END
 {
-	clear(@reqts);
+	//clear(@reqts);
 }
